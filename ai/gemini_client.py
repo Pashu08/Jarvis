@@ -1,7 +1,7 @@
 import os
 import requests
 
-from core.conversation import (
+from database.history_repo import (
     add_message,
     get_history
 )

@@ -1,16 +1,9 @@
 # core/assistant.py
-from core.ai import ask_gemini
-from core.memory import (
-    get_tasks,
-    get_projects,
-    get_project_tasks,
-    get_recent_notes,
-    search_memories_db,
-    search_notes_db,
-    search_tasks_db,
-    search_projects_db,
-    search_project_tasks_db
-)
+from ai.gemini_client import ask_gemini
+from database.task_repo import get_tasks, search_tasks_db
+from database.project_repo import get_projects, get_project_tasks, search_projects_db, search_project_tasks_db
+from database.note_repo import get_recent_notes, search_notes_db
+from database.memory_repo import search_memories_db
 
 def extract_keywords(question):
     """

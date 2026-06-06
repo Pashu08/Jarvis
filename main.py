@@ -1,57 +1,21 @@
-from core.database import initialize_database
+from database.connection import initialize_database
 
-from core.memory import (
-    save_memory,
-    get_memory,
-    get_all_memories,
-    update_memory,
-    add_note,
-    get_notes,
-    get_note_by_id,
-    get_recent_notes,
-    update_note,
-    add_task,
-    get_tasks,
-    get_task_by_id,
-    complete_task,
-    update_task,
-    delete_task,
-    add_project,
-    get_projects,
-    get_project_by_name,
-    update_project_description,
-    update_project_name,
-    add_project_task,
-    get_project_tasks,
-    get_project_task_by_id,
-    complete_project_task,
-    update_project_task,
-    delete_project_task,
-    delete_project,
-    get_tasks_by_name,
-    get_project_tasks_by_name,
-    search_memories_db,
-    search_notes_db,
-    search_tasks_db,
-    search_projects_db,
-    search_project_tasks_db
-)
+from database.memory_repo import save_memory, get_memory, get_all_memories, update_memory, search_memories_db
+from database.note_repo import add_note, get_notes, get_note_by_id, get_recent_notes, update_note, search_notes_db
+from database.task_repo import add_task, get_tasks, get_task_by_id, complete_task, update_task, delete_task, get_tasks_by_name, search_tasks_db
+from database.project_repo import add_project, get_projects, get_project_by_name, update_project_description, update_project_name, add_project_task, get_project_tasks, get_project_task_by_id, complete_project_task, update_project_task, delete_project_task, delete_project, get_project_tasks_by_name, search_projects_db, search_project_tasks_db
+
 
 # Phase 1 & 3: New Assistant Engine Imports
-from core.assistant import (
-    ask_with_context,
-    generate_daily_plan,
-    analyze_priorities,
-    summarize_recent_activity
-)
+from tools.os_tools import execute_tool
 
 # Phase 2: Upgraded NLP Parser
 from core.parser import parse_natural_language
-from core.conversation import get_history
+from database.history_repo import get_history
 
 # Phase V4.1: Routing & Tool Execution Layer
 from core.router import route_request
-from core.tools import execute_tool
+from tools.os_tools import execute_tool
 
 initialize_database()
 

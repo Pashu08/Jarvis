@@ -3,13 +3,10 @@ from pathlib import Path
 
 DB_PATH = Path.home() / "jarvis" / "data" / "jarvis.db"
 
-
 def get_connection():
     return sqlite3.connect(DB_PATH)
 
-
 def initialize_database():
-
     conn = get_connection()
     cursor = conn.cursor()
 
