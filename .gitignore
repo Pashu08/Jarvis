@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+
+data/*.db
+
+*_backup.py
+*_backup.db
+
+*.tar.gz
