@@ -49,6 +49,10 @@ from core.assistant import (
 from core.parser import parse_natural_language
 from core.conversation import get_history
 
+# Phase V4.1: Routing & Tool Execution Layer
+from core.router import route_request
+from core.tools import execute_tool
+
 initialize_database()
 
 notes = get_notes()
@@ -88,6 +92,18 @@ print("=================================\n")
 while True:
 
     user_input = input("You > ").strip()
+
+    if not user_input:
+        continue
+
+    # --- PHASE V4.1 ROUTING LAYER INTERCEPT ---
+    routing_data = route_request(user_input)
+    
+    if routing_data and routing_data.get("route") == "tool":
+        tool_response = execute_tool(routing_data.get("intent"), routing_data.get("payload"))
+        print(f"JARVIS > {tool_response}")
+        continue
+    # ------------------------------------------
 
     if user_input.lower() == "exit":
         print("JARVIS > Goodbye.")
@@ -143,6 +159,9 @@ DASHBOARD & ASSISTANT
 
 AI
   ask <question>
+
+TOOLS & AUTOMATION
+  open <app_name> (e.g., open whatsapp, open chrome)
 
 SYSTEM
   status
