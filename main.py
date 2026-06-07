@@ -18,7 +18,7 @@ from ai.assistant import (
 from core.parser import parse_natural_language
 from core.router import route_request
 from tools.os_tools import execute_tool, tool_health_check, PackageDiscovery, ActivityResolver
-from tools.voice_tools import listen, speak
+from tools.voice_tools import listen, speak, start_whisper_server
 
 from handlers.task_handlers import handle_task_commands
 from handlers.note_handlers import handle_note_commands
@@ -161,7 +161,6 @@ def process_command(user_input, is_voice=False):
 
     # 1. Multi-Action & Core OS Commands Intercept
     actions = parse_multi_action_command(user_input)
-    # Automatically triggers sequence logic if it's an OS command (single) or multiple actions
     if len(actions) > 1 or (len(actions) == 1 and actions[0][0] != "raw_intent"):
         summary = execute_action_sequence(actions)
         print(f"JARVIS >\n{summary}" if "\n" in summary else f"JARVIS > {summary}")
@@ -239,11 +238,15 @@ print("\n=================================")
 print("          JARVIS ONLINE          ")
 print("=================================\n")
 
+# Boot Local Server Pipeline
+start_whisper_server()
+
 health_status = tool_health_check()
 discovered_pkg_count = len(PackageDiscovery._cached_packages)
 activity_cache_count = len(ActivityResolver._cached_activities)
 log_file_status = "Available" if os.path.exists(os.path.join("logs", "jarvis_actions.log")) else "Not Created Yet"
 
+print("---------------------------------")
 print(f"Tool Layer Status: {health_status}")
 print(f"Packages Cached: {discovered_pkg_count}")
 print(f"Activity Cache Count: {activity_cache_count}")
@@ -274,7 +277,9 @@ while True:
         break
         
     if user_input.lower() == "voice":
-        speak("Listening")
+        speak("Preparing microphone")
+        time.sleep(1.5)
+        speak("Speak now")
         print("JARVIS > [Listening via Termux...]")
         recognized_text = listen()
         
@@ -291,4 +296,3 @@ while True:
         continue
         
     process_command(user_input, is_voice=False)
-
