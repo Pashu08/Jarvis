@@ -13,6 +13,7 @@ from ai.assistant import (
 from core.parser import parse_natural_language
 from core.router import route_request
 from tools.os_tools import execute_tool
+from tools.voice_tools import listen, speak
 
 from handlers.task_handlers import handle_task_commands
 from handlers.note_handlers import handle_note_commands
@@ -45,7 +46,7 @@ if pending_tasks:
 else:
     print("None")
 
-print("\nType 'help' for commands.")
+print("\nType 'help' for commands. Type 'voice' to initiate Voice V2.")
 print("=================================\n")
 
 while True:
@@ -78,8 +79,34 @@ while True:
         print("\n===== JARVIS COMMANDS =====")
         print("Refer to internal documentation for full command list.")
         print("Categories: Tasks, Notes, Memory, Projects, AI (ask <question>), Tools")
+        print("System: 'voice', 'exit'")
         print("===========================\n")
         
+    elif user_input.lower() == "voice":
+        # --- VOICE MODE V2 INTEGRATION ---
+        speak("Listening")
+        print("JARVIS > [Listening via Termux...]")
+        
+        recognized_text = listen()
+        
+        if recognized_text:
+            print(f"You (Voice) > {recognized_text}")
+            
+            # Reuse core routing layer without duplicating execution logic
+            routing_data = route_request(recognized_text)
+            
+            if routing_data and routing_data.get("route") == "tool":
+                tool_response = execute_tool(routing_data.get("intent"), routing_data.get("payload"))
+                print(f"JARVIS > {tool_response}")
+                speak(tool_response)
+            else:
+                # Text fallback explanation if the statement didn't route to a tool command
+                no_route_msg = "Command recognized, but it did not route to a valid tool execution layer."
+                print(f"JARVIS > {no_route_msg}")
+                speak("I couldn't match that to an automation tool.")
+        else:
+            print("JARVIS > No speech detected.")
+            
     elif user_input.lower() in ["today", "help me plan my day"]:
         print(f"JARVIS > {generate_daily_plan()}")
         
