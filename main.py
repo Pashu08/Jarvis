@@ -16,7 +16,7 @@ from ai.assistant import (
 )
 
 from core.parser import parse_natural_language
-from core.router import route_request
+from core.router import route_request, parse_multi_action_command
 from tools.os_tools import execute_tool, tool_health_check, PackageDiscovery, ActivityResolver
 from tools.voice_tools import listen, speak, start_whisper_server
 
@@ -72,44 +72,6 @@ def log_action(command_label, outcome_msg):
         print(f"[DEBUG] Error running write sequence to diagnostic logfile: {str(e)}")
 
 # --- MULTI-ACTION PIPELINE HELPERS ---
-def parse_multi_action_command(text):
-    """Parses a natural language string into a sequence of executable actions."""
-    delimiters = r"\band then\b|\bafter that\b|\bthen\b"
-    raw_segments = re.split(delimiters, text, flags=re.IGNORECASE)
-    
-    actions = []
-    for segment in raw_segments:
-        segment = segment.strip().lower()
-        if not segment: continue
-            
-        if segment in ["home", "go home"]:
-            actions.append(("home", None))
-        elif segment in ["back", "go back"]:
-            actions.append(("back", None))
-        elif segment in ["recent apps", "recent", "recents", "open recent apps", "open recents"]:
-            actions.append(("recent_apps", None))
-        elif segment in ["what app am i on", "current app"]:
-            actions.append(("current_app", None))
-        elif segment.startswith("open "):
-            app_name = segment[5:].strip()
-            if app_name: actions.append(("open_app", app_name))
-        elif segment.startswith("close "):
-            app_name = segment[6:].strip()
-            if app_name: actions.append(("close_app", app_name))
-        elif segment.startswith("type "):
-            text_to_type = segment[5:].strip()
-            if text_to_type: actions.append(("type_text", text_to_type))
-        elif segment.startswith("tap "):
-            coords = segment[4:].strip()
-            if coords: actions.append(("tap", coords))
-        elif segment.startswith("swipe "):
-            direction = segment[6:].strip()
-            if direction: actions.append(("swipe", direction))
-        else:
-            actions.append(("raw_intent", segment))
-            
-    return actions
-
 def execute_action_sequence(actions):
     """Executes actions sequentially with STOP_ON_FAILURE implementation."""
     results = []
